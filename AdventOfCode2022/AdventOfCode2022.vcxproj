@@ -104,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +120,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +132,48 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AdventOfCode2022.cpp" />
+    <ClCompile Include="DayBase.cpp" />
+    <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="solutions\Day1.cpp" />
+    <ClCompile Include="solutions\Day10.cpp" />
+    <ClCompile Include="solutions\Day11.cpp" />
+    <ClCompile Include="solutions\Day12.cpp" />
+    <ClCompile Include="solutions\Day13.cpp" />
+    <ClCompile Include="solutions\Day14.cpp" />
+    <ClCompile Include="solutions\Day15.cpp" />
+    <ClCompile Include="solutions\Day16.cpp" />
+    <ClCompile Include="solutions\Day17.cpp" />
+    <ClCompile Include="solutions\Day2.cpp" />
+    <ClCompile Include="solutions\Day3.cpp" />
+    <ClCompile Include="solutions\Day4.cpp" />
+    <ClCompile Include="solutions\Day5.cpp" />
+    <ClCompile Include="solutions\Day6.cpp" />
+    <ClCompile Include="solutions\Day7.cpp" />
+    <ClCompile Include="solutions\Day8.cpp" />
+    <ClCompile Include="solutions\Day9.cpp" />
+    <ClCompile Include="solutions\DayTemplate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DayBase.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="solutions\Day1.h" />
+    <ClInclude Include="solutions\Day10.h" />
+    <ClInclude Include="solutions\Day11.h" />
+    <ClInclude Include="solutions\Day12.h" />
+    <ClInclude Include="solutions\Day13.h" />
+    <ClInclude Include="solutions\Day14.h" />
+    <ClInclude Include="solutions\Day15.h" />
+    <ClInclude Include="solutions\Day16.h" />
+    <ClInclude Include="solutions\Day17.h" />
+    <ClInclude Include="solutions\Day2.h" />
+    <ClInclude Include="solutions\Day3.h" />
+    <ClInclude Include="solutions\Day4.h" />
+    <ClInclude Include="solutions\Day5.h" />
+    <ClInclude Include="solutions\Day6.h" />
+    <ClInclude Include="solutions\Day7.h" />
+    <ClInclude Include="solutions\Day8.h" />
+    <ClInclude Include="solutions\Day9.h" />
+    <ClInclude Include="solutions\DayTemplate.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
