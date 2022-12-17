@@ -11,6 +11,8 @@
 #include <set>
 #include <chrono>
 #include <sstream>
+#include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -2161,6 +2163,1701 @@ private:
 };
 
 /*
+ *Day 13
+ */
+class DayThirteen : public DayBase
+{
+public:
+    DayThirteen() : DayBase("Thirteen", "input\\Day13_Input.txt") {}
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    {
+        string line1;
+        string line2;
+        
+        int current = 1;
+        int total = 0;
+
+        while (getline(input, line1) && getline(input, line2))
+        {
+
+            ListItem line1Item(nullptr);
+            ListItem line2Item(nullptr);
+
+            parseLine(line1, line1Item);
+            parseLine(line2, line2Item);
+
+            VALUE ret = compare(line1Item, line2Item);
+
+            if (ret == TRUE || ret == UNSURE)
+            {
+                total += current;
+            }
+
+            string skip;
+            getline(input, skip);
+
+            current++;
+        }
+
+        output << total;
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        string line1;
+        string line2;
+
+        vector<ListItem> items;
+
+        items.emplace_back(nullptr);
+        ListItem& item2 = items.back();
+        item2.isDecoder = true;
+        item2.elements.emplace_back(item2);
+        item2.elements[0].elements.emplace_back(item2.elements[0]);
+        item2.elements[0].elements[0].value = 2;
+
+        items.emplace_back(nullptr);
+        ListItem& item6 = items.back();
+        item6.isDecoder = true;
+        item6.elements.emplace_back(item6);
+        item6.elements[0].elements.emplace_back(item6.elements[0]);
+        item6.elements[0].elements[0].value = 6;
+
+        while (getline(input, line1) && getline(input, line2))
+        {
+            items.emplace_back(nullptr);
+            ListItem& line1Item = items.back();
+            parseLine(line1, line1Item);
+
+            items.emplace_back(nullptr);
+            ListItem& line2Item = items.back();
+            parseLine(line2, line2Item);
+
+            string skip;
+            getline(input, skip);
+        }
+
+        sort(items.begin(), items.end(), DayThirteen::vectorCompare);
+
+        int total = 1;
+
+        for (int i = 0; i < items.size(); ++i)
+        {
+            if (items[i].isDecoder)
+            {
+                total *= i + 1;
+            }
+        }
+
+        output << total;
+    }
+
+private:
+
+    class ListItem
+    {
+    public:
+        vector<ListItem> elements;
+
+        int value = -1;
+
+        bool isDecoder = false;
+
+        ListItem* parent;
+
+        ListItem(ListItem* aParent) : parent(aParent) {}
+    };
+
+    void parseLine(string line, ListItem& root)
+    {
+        ListItem* currentItem = &root;
+        stringstream ss;
+        for (int i = 1; i < line.length(); ++i)
+        {
+            if (line[i] == '[')
+            {
+                currentItem->elements.emplace_back(currentItem);
+                currentItem = &currentItem->elements.back();
+            }
+            else if (line[i] == ']')
+            {
+                if (ss.str().length() > 0)
+                {
+                    currentItem->elements.emplace_back(currentItem);
+                    currentItem->elements.back().value = atoi(ss.str().c_str());
+
+                    ss.str("");
+                }
+
+                currentItem = currentItem->parent;
+            }
+            else if (line[i] == ',')
+            {
+                if (ss.str().length() > 0)
+                {
+                    currentItem->elements.emplace_back(currentItem);
+                    currentItem->elements.back().value = atoi(ss.str().c_str());
+
+                    ss.str("");
+                }
+            }
+            else
+            {
+                ss << line[i];
+            }
+        }
+    }
+
+    enum VALUE
+    {
+        TRUE,
+        FALSE,
+        UNSURE
+    };
+
+    static VALUE compare(const ListItem& left, const ListItem& right)
+    {
+        if (left.value != -1 && right.value != -1)
+        {
+            if (left.value < right.value)
+            {
+                return TRUE;
+            }
+            else if (left.value == right.value)
+            {
+                return UNSURE;
+            }
+            else
+            {
+                return FALSE;
+            }
+
+        }
+        else if (left.value != -1)
+        {
+            if (right.elements.size() == 0)
+            {
+                return FALSE;
+            }
+
+            VALUE ret = compare(left, right.elements[0]);
+
+            if (ret != UNSURE)
+            {
+                return ret;
+            }
+
+            if (right.elements.size() > 1)
+            {
+                return TRUE;
+            }
+
+            return UNSURE;
+        }
+        else if (right.value != -1)
+        {
+            if (left.elements.size() == 0)
+            {
+                return TRUE;
+            }
+
+            VALUE ret = compare(left.elements[0], right);
+
+            if (ret != UNSURE)
+            {
+                return ret;
+            }
+
+            if (left.elements.size() > 1)
+            {
+                return FALSE;
+            }
+
+            return UNSURE;
+        }
+
+        for (int i = 0; i < left.elements.size(); ++i)
+        {
+            if (right.elements.size() <= i)
+            {
+                return FALSE;
+            }
+
+            VALUE ret = compare(left.elements[i], right.elements[i]);
+
+            if (ret != UNSURE)
+            {
+                return ret;
+            }
+        }
+
+        if (left.elements.size() == right.elements.size())
+        {
+            return UNSURE;
+        }
+
+        return TRUE;
+    }
+
+    static bool vectorCompare(const ListItem& left, const ListItem& right)
+    {
+        return compare(left, right) != FALSE;
+    }
+
+};
+
+/*
+ *Day 14
+ */
+class DayFourteen : public DayBase
+{
+public:
+    DayFourteen() : DayBase("Fourteen", "input\\Day14_Input.txt") {}
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    {
+        vector<vector<char>> grid;
+
+        string line;
+        while (getline(input, line))
+        {
+            vector<string> coordinates = splitString(line, " -> ");
+
+            for (int i = 0; i < coordinates.size() - 1; ++i)
+            {
+                insertLine(coordinates[i], coordinates[i + 1], grid);
+            }
+        }
+
+        //printGrid(grid);
+
+        int count = 0;
+
+        while (dropSand(grid))
+        {
+            count++;
+
+            //printGrid(grid);
+        }
+
+        output << count;
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        vector<vector<char>> grid;
+
+        string line;
+        while (getline(input, line))
+        {
+            vector<string> coordinates = splitString(line, " -> ");
+
+            for (int i = 0; i < coordinates.size() - 1; ++i)
+            {
+                insertLine(coordinates[i], coordinates[i + 1], grid);
+            }
+        }
+
+        resizeGrid(grid[0].size(), grid.size() + 2, grid);
+
+        for (int i = 0; i < grid[grid.size() - 1].size(); ++i)
+        {
+            grid[grid.size() - 1][i] = '#';
+        }
+
+        //printGrid(grid);
+
+        int count = 0;
+
+        while (dropSandV2(grid))
+        {
+            count++;
+
+            //printGrid(grid);
+        }
+
+        output << count;
+    }
+
+private:
+    int startX = 500;
+
+    void insertLine(string a, string b, vector<vector<char>>& grid)
+    {
+        vector<string> aCoords = splitString(a, ",");
+        vector<string> bCoords = splitString(b, ",");
+
+        int aX = atoi(aCoords[0].c_str());
+        int aY = atoi(aCoords[1].c_str());
+
+        int bX = atoi(bCoords[0].c_str());
+        int bY = atoi(bCoords[1].c_str());
+
+        if (aX < startX)
+        {
+            startX = aX;
+        }
+        if (bX < startX)
+        {
+            startX = bX;
+        }
+
+        resizeGrid((aX > bX ? aX : bX) + 1, (aY > bY ? aY : bY) + 1, grid);
+
+        if (aX == bX)
+        {
+            int startY = aY < bY ? aY : bY;
+            int endY = aY < bY ? bY : aY;
+
+            for (int y = startY; y <= endY; ++y)
+            {
+                grid[y][aX] = '#';
+            }
+        }
+        else
+        {
+            int startX = aX < bX ? aX : bX;
+            int endX = aX < bX ? bX : aX;
+
+            for (int x = startX; x <= endX; ++x)
+            {
+                grid[aY][x] = '#';
+            }
+        }
+    }
+
+    void resizeGrid(size_t width, size_t height, vector<vector<char>>& grid, bool addFloor = false)
+    {
+        if (grid.size() < height)
+        {
+            grid.resize(height);
+        }
+
+        size_t newWidth = grid[0].size() < width ? width : grid[0].size();
+
+        if (grid[grid.size()-1].size() < newWidth)
+        {
+            for (int i = 0; i < grid.size(); ++i)
+            {
+                grid[i].resize(newWidth, (addFloor && i == grid.size() -1) ? '#' : '.');
+            }
+        }
+    }
+
+    void printGrid(vector<vector<char>> grid)
+    {
+        for (int y = 0; y < grid.size(); ++y)
+        {
+            for (int x = startX; x < grid[y].size(); ++x)
+            {
+                cout << grid[y][x];
+            }
+
+            cout << endl;
+        }
+        
+        cout << endl;
+    }
+
+    bool dropSand(vector<vector<char>>& grid)
+    {
+        int currX = 500;
+        int currY = 0;
+
+        if (grid[currY][currX] == '#')
+        {
+            return false;
+        }
+
+        while (true)
+        {
+            if (grid.size() <= currY + 1)
+            {
+                return false;
+            }
+            else if (grid[currY+1][currX] == '.')
+            {
+                currY++;
+            }
+            else if (currX - 1 < 0)
+            {
+                return false;
+            }
+            else if (grid[currY+1][currX-1] == '.')
+            {
+                currY++;
+                currX--;
+            }
+            else if (currX + 1 >= grid[currY].size())
+            {
+                return false;
+            }
+            else if (grid[currY + 1][currX + 1] == '.')
+            {
+                currY++;
+                currX++;
+            }
+            else
+            {
+                grid[currY][currX] = '#';
+                return true;
+            }
+        }
+    }
+
+    bool dropSandV2(vector<vector<char>>& grid)
+    {
+        int currX = 500;
+        int currY = 0;
+
+        if (grid[currY][currX] == '#')
+        {
+            return false;
+        }
+
+        while (true)
+        {
+            if (grid.size() <= currY + 1)
+            {
+                return false;
+            }
+            else if (grid[currY + 1][currX] == '.')
+            {
+                currY++;
+            }
+            else if (currX - 1 < 0)
+            {
+                return false;
+            }
+            else if (grid[currY + 1][currX - 1] == '.')
+            {
+                currY++;
+                currX--;
+            }
+            else
+            {
+                if (currX + 1 >= grid[currY].size())
+                {
+                    resizeGrid(currX + 2, grid.size(), grid, true);
+                }
+
+                if (grid[currY + 1][currX + 1] == '.')
+                {
+                    currY++;
+                    currX++;
+                }
+                else
+                {
+                    grid[currY][currX] = '#';
+                    return true;
+                }
+            }
+        }
+    }
+};
+
+/*
+ *Day 15
+ */
+class DayFifteen : public DayBase
+{
+public:
+    DayFifteen() : DayBase("Fifteen", "input\\Day15_Input.txt") {}
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    {
+        string line;
+        vector<pair<int, int>> sensors;
+        vector<pair<int, int>> closestBeacons;
+        vector<int> distances;
+
+        //int minX = -1;
+        //int minY = -1;
+        //int maxX = -1;
+        //int maxY = -1;
+
+        int maxDistance = -1;
+
+        while (getline(input, line))
+        {
+            vector<string> words = splitString(line, " ");
+
+            int sensorX = atoi(words[2].substr(2, words[2].length() - 3).c_str());
+            int sensorY = atoi(words[3].substr(2, words[3].length() - 3).c_str());
+
+            int beaconX = atoi(words[8].substr(2, words[8].length() - 3).c_str());
+            int beaconY = atoi(words[9].substr(2).c_str());
+
+            //if (minX == -1)
+            //{
+            //    minX = sensorX;
+            //    maxX = sensorX;
+            //    minY = sensorY;
+            //    maxY = sensorY;
+            //}
+
+            //if (sensorX < minX)
+            //{
+            //    minX = sensorX;
+            //}
+            //if (sensorX > maxX)
+            //{
+            //    maxX = sensorX;
+            //}
+            //if (sensorY < minY)
+            //{
+            //    minY = sensorY;
+            //}
+            //if (sensorY > maxY)
+            //{
+            //    maxY = sensorY;
+            //}
+
+            //if (beaconX < minX)
+            //{
+            //    minX = beaconX;
+            //}
+            //if (beaconX > maxX)
+            //{
+            //    maxX = beaconX;
+            //}
+            //if (beaconY < minY)
+            //{
+            //    minY = beaconY;
+            //}
+            //if (beaconY > maxY)
+            //{
+            //    maxY = beaconY;
+            //}
+
+            int distance = abs(sensorX - beaconX) + abs(sensorY - beaconY);
+
+            //if (maxDistance < distance)
+            //{
+            //    maxDistance = distance;
+            //}
+
+            distances.push_back(distance);
+
+            sensors.emplace_back(pair<int, int>(sensorX, sensorY));
+            closestBeacons.emplace_back(pair<int, int>(beaconX, beaconY));
+        }
+
+        //Grid grid(minX - maxDistance, maxX + maxDistance, minY - maxDistance, maxY + maxDistance);
+
+        //for (int i = 0; i < sensors.size(); ++i)
+        //{
+        //    for (int y = 0; y <= distances[i]; ++y)
+        //    {
+        //        for (int x = 0; x <= distances[i] - y; ++x)
+        //        {
+        //            grid.addChar(sensors[i].first + x, sensors[i].second + y, '#');
+
+        //            if (x != 0)
+        //            {
+        //                grid.addChar(sensors[i].first - x, sensors[i].second + y, '#');
+        //            }
+
+        //            if (y != 0)
+        //            {
+        //                grid.addChar(sensors[i].first + x, sensors[i].second - y, '#');
+
+        //                if (x != 0)
+        //                {
+        //                    grid.addChar(sensors[i].first - x, sensors[i].second - y, '#');
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    grid.addChar(sensors[i].first, sensors[i].second, 'S');
+        //    grid.addChar(closestBeacons[i].first, closestBeacons[i].second, 'B');
+        //}
+
+        //int total = grid.getFilledCount(2000000);
+
+
+        int testRow = 2000000;
+        //int testRow = 10;
+
+        vector<int> sensorIndexes;
+        int minX = -1;
+        int maxX = -1;
+
+        for (int i = 0; i < sensors.size(); ++i)
+        {
+            if (sensors[i].second + distances[i] < testRow)
+            {
+                continue;
+            }
+            else if (sensors[i].second - distances[i] > testRow)
+            {
+                continue;
+            }
+
+            sensorIndexes.push_back(i);
+
+            int lowX = sensors[i].first - distances[i];
+            int highX = sensors[i].first + distances[i];
+
+            if (minX == -1)
+            {
+                minX = lowX;
+                maxX = highX;
+            }
+
+            if (lowX < minX)
+            {
+                minX = lowX;
+            }
+            if (highX > maxX)
+            {
+                maxX = highX;
+            }
+        }
+
+        vector<char> row;
+        row.resize(maxX - minX + 1, '.');
+
+        for (int i = 0; i < sensorIndexes.size(); ++i)
+        {
+            int sI = sensorIndexes[i];
+
+            int sensorY = abs(testRow - sensors[sI].second);
+
+            for (int x = 0; x <= distances[sI] - sensorY; ++x)
+            {
+                row[sensors[sI].first + x - minX] = '#';
+
+                if (x != 0)
+                {
+                    row[sensors[sI].first - x - minX] = '#';
+                }
+            }
+
+            if (closestBeacons[sI].second == testRow)
+            {
+                row[closestBeacons[sI].first - minX] = 'B';
+            }
+        }
+
+
+        int total = 0;
+
+        for (int x = 0; x < row.size(); ++x)
+        {
+            if (row[x] != '.' && row[x] != 'B')
+            {
+                total++;
+            }
+        }
+
+        output << total;
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        string line;
+        vector<pair<int, int>> sensors;
+        vector<pair<int, int>> closestBeacons;
+        vector<int> distances;
+
+        while (getline(input, line))
+        {
+            vector<string> words = splitString(line, " ");
+
+            int sensorX = atoi(words[2].substr(2, words[2].length() - 3).c_str());
+            int sensorY = atoi(words[3].substr(2, words[3].length() - 3).c_str());
+
+            int beaconX = atoi(words[8].substr(2, words[8].length() - 3).c_str());
+            int beaconY = atoi(words[9].substr(2).c_str());
+
+            int distance = abs(sensorX - beaconX) + abs(sensorY - beaconY);
+            distances.push_back(distance);
+
+            sensors.emplace_back(pair<int, int>(sensorX, sensorY));
+            closestBeacons.emplace_back(pair<int, int>(beaconX, beaconY));
+        }
+
+        int maxCoord = 4000000;
+        //int maxCoord = 20;
+
+        bool found = true;
+        long long foundX = 0;
+        long long foundY = 0;
+
+        for (int y = 0; y < maxCoord; ++y)
+        {
+            for (int x = 0; x < maxCoord; ++x)
+            {
+                found = true;
+
+                for (int i = 0; i < sensors.size(); ++i)
+                {
+                    int sX = sensors[i].first;
+                    int sY = sensors[i].second;
+                    int dist = distances[i];
+
+                    int distToPoint = abs(sX - x) + abs(sY - y);
+
+                    if (distToPoint <= dist)
+                    {
+                        found = false;
+                        x = sX + dist - abs(sY - y);
+
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    foundX = x;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                foundY = y;
+                break;
+            }
+        }
+
+        long long total = foundX * 4000000 + foundY;
+
+        output << total;
+    }
+private:
+    //class Grid
+    //{
+    //public:
+    //    vector<vector<char>> values;
+    //    int startX = 0;
+    //    int startY = 0;
+    //    int endX = 0;
+    //    int endY = 0;
+
+    //    Grid(int minX, int maxX, int minY, int maxY)
+    //    {
+    //        startX = minX;
+    //        startY = minY;
+    //        endX = maxX;
+    //        endY = maxY;
+
+    //        int width = maxX - minX + 1;
+    //        int height = maxY - minY + 1;
+
+    //        values.resize(height);
+    //        for (int i = 0; i < height; ++i)
+    //        {
+    //            values[i].resize(width, '.');
+    //        }
+    //    }
+
+    //    void addChar(int x, int y, char value)
+    //    {
+    //        values[y - startY][x - startX] = value;
+    //    }
+
+    //    char getChar(int x, int y)
+    //    {
+    //        return values[y - startY][x - startX];
+    //    }
+
+    //    int getFilledCount(int y)
+    //    {
+    //        int count = 0;
+    //        vector<char>& row = values[y - startY];
+    //        for (int x = 0; x < row.size(); ++x)
+    //        {
+    //            if (row[x] != '.' && row[x] != 'B')
+    //            {
+    //                count++;
+    //            }
+    //        }
+
+    //        return count;
+    //    }
+    //};
+};
+
+
+/*
+ *Day 15 Harry
+ */
+
+using point = pair<int, int>;
+
+int taxi_dist(const point& a, const point& b) {
+    return abs(a.first - b.first) + abs(a.second - b.second);
+}
+
+point operator*(const point& a, int scale) {
+    return { a.first * scale, a.second * scale };
+}
+
+point operator-(const point& a, const point& b) {
+    return { a.first - b.first, a.second - b.second };
+}
+point operator+(const point& a, const point& b) {
+    return a - (b * -1);
+}
+
+class DayFifteenHarry : public DayBase
+{
+public:
+    DayFifteenHarry() : DayBase("Fifteen Harry", "input\\Day15_Input.txt") {}
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    {
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        parse(input);
+        for (const auto& line : inputPoints) {
+            const auto& source = line.first;
+            const auto dist = taxi_dist(line.first, line.second) + 1;
+            for (int i = 0; i < 4 * dist; ++i) {
+                const auto p = from_iter(source, dist, i);
+                if (min(p.first, p.second) >= 0 && max(p.first, p.second) <= 4000000) {
+                    bool valid = true;
+                    if (all_of(inputPoints.begin(), inputPoints.end(), [&p](const auto& s) {
+                        return taxi_dist(p, s.first) > taxi_dist(s.first, s.second);
+                        })) {
+                        output << (uint64_t)(p.first) * 4000000 + (uint64_t)p.second << endl;
+                        return;
+                    }
+                }
+            }
+        }
+
+    }
+
+private:
+    vector<pair<point, point>> inputPoints;
+
+    int minx, maxx;
+
+    void parse(istream& input) {
+        string s;
+        bool start = true;
+        while (getline(input, s)) {
+            inputPoints.emplace_back();
+            auto& data = inputPoints.back();
+            sscanf_s(s.c_str(), "Sensor at x=%i, y=%i: closest beacon is at x=%i, y=%i",
+                &data.first.first, &data.first.second, &data.second.first,
+                &data.second.second);
+            if (start) {
+                start = false;
+                minx = maxx = data.first.first;
+            }
+            minx = min(minx, data.first.first - taxi_dist(data.first, data.second));
+            maxx = max(maxx, data.first.first + taxi_dist(data.first, data.second));
+            //cerr << data.first << ", " << data.second << endl;
+        }
+        //cerr << minx << ' ' << maxx << endl;
+    }
+
+    point from_iter(const point& source, const int dist, const int iter) {
+        point out;
+
+        if (iter < 2 * dist) {
+            out.first = iter - dist;
+        }
+        else {
+            out.first = 3 * dist - iter;
+        }
+
+        if (iter <= dist) {
+            out.second = iter;
+        }
+        else if (iter <= 3 * dist) {
+            out.second = 2 * dist - iter;
+        }
+        else {
+            out.second = iter - (4 * dist);
+        }
+        return out + source;
+    }
+
+};
+
+
+class DaySixteen : public DayBase
+{
+public:
+    DaySixteen() : DayBase("Sixteen", "input\\Day16_Input.txt") {}
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    {
+        State state;
+        vector<Valve>& valves = state.valves;
+        parse(input, valves);
+
+        size_t valveCount = valves.size();
+
+        Valve* currentValve = nullptr;
+        for (int i = 0; i < valveCount; ++i)
+        {
+            if (valves[i].name.compare("AA") == 0)
+            {
+                currentValve = &valves[i];
+            }
+
+            valves[i].index = i;
+        }
+
+        int total = getBestPressure(30, currentValve, state);
+
+        output << total;
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        State state;
+        vector<Valve>& valves = state.valves;
+        parse(input, valves);
+
+        size_t valveCount = valves.size();
+
+        Valve* currentValve = nullptr;
+        for (int i = 0; i < valveCount; ++i)
+        {
+            if (valves[i].name.compare("AA") == 0)
+            {
+                currentValve = &valves[i];
+            }
+
+            valves[i].index = i;
+        }
+
+        Input funcInput;
+
+        funcInput.currPlayer = currentValve;
+        funcInput.currElephant = currentValve;
+
+        int total = getBestPressureV2(26, state, funcInput);
+
+        output << total;
+    }
+private:
+    class Valve
+    {
+    public:
+        string name;
+        int pressure;
+        int index;
+
+        bool open = false;
+
+        vector<string> pipeNames;
+        vector<Valve*> pipes;
+    };
+
+    struct State
+    {
+        vector<Valve> valves;
+    };
+
+    struct Input
+    {
+        Valve* currPlayer = nullptr;
+        Valve* currElephant = nullptr;
+
+        int etaPlayer = 0;
+        int etaElephant = 0;
+    };
+
+    void parse(istream& input, vector<Valve>& valves)
+    {
+        string line;
+        while (getline(input, line))
+        {
+            valves.emplace_back();
+
+            Valve& currentValve = valves.back();
+
+            vector<string> strings = splitString(line, " ");
+
+            currentValve.name = strings[1];
+
+            currentValve.pressure = atoi(strings[4].substr(5, strings[4].length() - 6).c_str());
+
+            for (int i = 9; i < strings.size(); ++i)
+            {
+                currentValve.pipeNames.emplace_back(strings[i].substr(0, 2));
+            }
+        }
+
+        for (int v = 0; v < valves.size(); ++v)
+        {
+            Valve& currentValve = valves[v];
+
+            for (int i = 0; i < currentValve.pipeNames.size(); ++i)
+            {
+                for (int oV = 0; oV < valves.size(); ++oV)
+                {
+                    if (oV != v)
+                    {
+                        if (currentValve.pipeNames[i].compare(valves[oV].name) == 0)
+                        {
+                            currentValve.pipes.push_back(&valves[oV]);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    int getBestPressure(int turn, Valve* currentValve, State& state)
+    {
+        size_t valveCount = state.valves.size();
+
+        int currIndex = currentValve->index;
+
+        vector<int> dist;
+        vector<bool> visited;
+        dist.resize(valveCount, INT_MAX);
+        visited.resize(valveCount, false);
+
+        dist[currIndex] = 0;
+
+        deque<pair<Valve*, int>> toCheck;
+        toCheck.push_back(pair<Valve*, int>(currentValve, 0));
+        while (!toCheck.empty())
+        {
+            Valve* valve = toCheck.front().first;
+            int nextDepth = toCheck.front().second + 1;
+
+            for (int i = 0; i < valve->pipes.size(); ++i)
+            {
+                Valve* next = valve->pipes[i];
+                if (!visited[next->index])
+                {
+                    visited[next->index] = true;
+                    dist[next->index] = nextDepth;
+
+                    toCheck.push_back(pair<Valve*, int>(next, nextDepth));
+                }
+            }
+
+            toCheck.pop_front();
+        }
+
+        int bestPressure = 0;
+
+        for (int i = 0; i < valveCount; ++i)
+        {
+            Valve& toCheck = state.valves[i];
+            if (!toCheck.open && toCheck.pressure != 0)
+            {
+                int nextTurn = turn - dist[i] - 1;
+
+                if (nextTurn <= 0)
+                    continue;
+
+                toCheck.open = true;
+
+                int newPressure = (nextTurn * toCheck.pressure) + getBestPressure(nextTurn, &toCheck, state);
+
+                if (newPressure > bestPressure)
+                {
+                    bestPressure = newPressure;
+                }
+
+                toCheck.open = false;
+            }
+        }
+
+        return bestPressure;
+    }
+
+    int getBestPressureV2(int turn, State& state, Input& input)
+    {
+        if (turn <= 0)
+            return 0;
+
+        size_t valveCount = state.valves.size();
+
+        vector<int> distPlayer;
+        vector<int> distElephant;
+
+        if (input.etaPlayer == 0)
+        {
+            distPlayer.resize(valveCount, INT_MAX);
+            getShortestDistances(input.currPlayer, distPlayer);
+        }
+
+        if (input.etaElephant == 0)
+        {
+            distElephant.resize(valveCount, INT_MAX);
+            getShortestDistances(input.currElephant, distElephant);
+        }
+
+        int bestPressure = 0;
+
+        vector<Valve*> openValves;
+
+        for (int i = 0; i < valveCount; ++i)
+        {
+            Valve& toCheck = state.valves[i];
+            if (!toCheck.open && toCheck.pressure != 0)
+            {
+                openValves.push_back(&toCheck);
+            }
+        }
+
+        if (input.etaPlayer == 0 && input.etaElephant == 0)
+        {
+            for (int p = 0; p < openValves.size(); ++p)
+            {
+                for (int e = 0; e < openValves.size(); ++e)
+                {
+                    if (p != e)
+                    {
+                        Input newInput(input);
+
+                        int pI = openValves[p]->index;
+                        int eI = openValves[e]->index;
+
+                        int playerNextTurn = turn - distPlayer[pI] - 1;
+                        int elephantNextTurn = turn - distElephant[eI] - 1;
+
+                        int playerPressure = 0;
+                        if (playerNextTurn > 0)
+                        {
+                            openValves[p]->open = true;
+                            playerPressure = playerNextTurn * openValves[p]->pressure;
+                            newInput.currPlayer = openValves[p];
+                        }
+                        else
+                        {
+                            newInput.etaPlayer = turn;
+                        }
+
+                        int elephantPressure = 0;
+                        if (elephantNextTurn > 0)
+                        {
+                            openValves[e]->open = true;
+                            elephantPressure = elephantNextTurn * openValves[e]->pressure;
+                            newInput.currElephant = openValves[e];
+                        }
+                        else
+                        {
+                            newInput.etaElephant = turn;
+                        }
+
+                        int nextTurn = playerNextTurn;
+
+                        if (playerNextTurn < elephantNextTurn)
+                        {
+                            nextTurn = elephantNextTurn;
+                            newInput.etaPlayer = elephantNextTurn - playerNextTurn;
+                        }
+                        else if (playerNextTurn > elephantNextTurn)
+                        {
+                            newInput.etaElephant = playerNextTurn - elephantNextTurn;
+                        }
+
+                        int newPressure = playerPressure + elephantPressure + getBestPressureV2(nextTurn, state, newInput);
+
+                        if (newPressure > bestPressure)
+                        {
+                            bestPressure = newPressure;
+                        }
+
+                        if (elephantNextTurn > 0)
+                        {
+                            openValves[e]->open = false;
+                        }
+
+                        if (playerNextTurn > 0)
+                        {
+                            openValves[p]->open = false;
+                        }
+                    }
+                }
+            }
+        }
+        else if (input.etaPlayer == 0)
+        {
+            for (int v = 0; v < openValves.size(); ++v)
+            {
+                Input newInput(input);
+                Valve* curr = openValves[v];
+
+                int nextTurn = turn - distPlayer[curr->index] - 1;
+                int pressure = nextTurn * curr->pressure;
+
+                curr->open = true;
+                newInput.currPlayer = curr;
+
+                if (input.etaElephant < (turn - nextTurn))
+                {
+                    newInput.etaPlayer = turn - newInput.etaElephant - nextTurn;
+
+                    nextTurn = turn - newInput.etaElephant;
+                    newInput.etaElephant = 0;
+                }
+                else
+                {
+                    newInput.etaPlayer = 0;
+                    newInput.etaElephant -= (turn - nextTurn);
+                }
+
+                int newPressure = pressure + getBestPressureV2(nextTurn, state, newInput);
+
+                if (newPressure > bestPressure)
+                {
+                    bestPressure = newPressure;
+                }
+
+                curr->open = false;
+            }
+        }
+        else // state.etaElephant == 0
+        {
+            for (int v = 0; v < openValves.size(); ++v)
+            {
+                Input newInput(input);
+                Valve* curr = openValves[v];
+                int nextTurn = turn - distElephant[curr->index] - 1;
+                int pressure = nextTurn * curr->pressure;
+
+                curr->open = true;
+                newInput.currElephant = curr;
+
+                if (newInput.etaPlayer < (turn - nextTurn))
+                {
+                    newInput.etaElephant = turn - newInput.etaPlayer - nextTurn;
+
+                    nextTurn = turn - newInput.etaPlayer;
+                    newInput.etaPlayer = 0;
+                }
+                else
+                {
+                    newInput.etaElephant = 0;
+                    newInput.etaPlayer -= (turn - nextTurn);
+                }
+
+                int newPressure = pressure + getBestPressureV2(nextTurn, state, newInput);
+
+                if (newPressure > bestPressure)
+                {
+                    bestPressure = newPressure;
+                }
+
+                curr->open = false;
+            }
+        }
+
+        return bestPressure;
+    }
+
+    void getShortestDistances(Valve* start, vector<int>& dist)
+    {
+        vector<bool> visited;
+        visited.resize(dist.size(), false);
+
+        dist[start->index] = 0;
+
+        deque<pair<Valve*, int>> toCheck;
+        toCheck.push_back(pair<Valve*, int>(start, 0));
+        while (!toCheck.empty())
+        {
+            Valve* valve = toCheck.front().first;
+            int nextDepth = toCheck.front().second + 1;
+
+            for (int i = 0; i < valve->pipes.size(); ++i)
+            {
+                Valve* next = valve->pipes[i];
+                if (!visited[next->index])
+                {
+                    visited[next->index] = true;
+                    dist[next->index] = nextDepth;
+
+                    toCheck.push_back(pair<Valve*, int>(next, nextDepth));
+                }
+            }
+
+            toCheck.pop_front();
+        }
+    }
+};
+
+/*
+ * Day 17
+ */
+class DaySeventeen : public DayBase
+{
+public:
+    DaySeventeen() : DayBase("Seventeen", "input\\Day17_Input.txt") {}
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    { 
+        initRockShapes();
+
+        string line;
+        getline(input, line);
+
+        int currLineIndex = 0;
+
+        const long long NUM_ROCKS = 2022;
+
+        for (int i = 0; i < NUM_ROCKS; ++i)
+        {
+            Rock rock;
+            spawnRock(rock);
+
+            bool isDone = false;
+            while (!isDone)
+            {
+                moveRock(rock, line[currLineIndex] == '<' ? -1 : 1, 0);
+                ++currLineIndex;
+                if (currLineIndex >= line.length())
+                    currLineIndex = 0;
+
+                isDone = !moveRock(rock, 0, -1);
+
+                if (isDone)
+                {
+                    settleRock(rock);
+                }
+            }
+
+            //print();
+            //cout << endl;
+        }
+
+        output << getTowerHeight();
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        CurrentRock = 0;
+        grid.resize(0);
+        yOffset = 0;
+
+        vector<long long> towerHeights;
+
+        string line;
+        getline(input, line);
+
+        int currLineIndex = 0;
+
+        const long long NUM_ROCKS = 100000;
+
+        int patternCount = 0;
+        int testPatternCount = 5;
+
+        for (long long i = 0; i < NUM_ROCKS; ++i)
+        {
+            Rock rock;
+            spawnRock(rock);
+
+            bool isDone = false;
+            while (!isDone)
+            {
+                moveRock(rock, line[currLineIndex] == '<' ? -1 : 1, 0);
+                ++currLineIndex;
+                if (currLineIndex >= line.length())
+                    currLineIndex = 0;
+
+                isDone = !moveRock(rock, 0, -1);
+
+                if (isDone)
+                {
+                    settleRock(rock);
+                }
+            }
+
+            towerHeights.emplace_back(getTowerHeight());
+
+            patternCount = getPatternCount(towerHeights, i, testPatternCount);
+
+            if (patternCount != 0)
+                break;
+        }
+
+        long long countAt = 1000000000000;
+        long long diff = towerHeights[towerHeights.size() - 1] - towerHeights[towerHeights.size() - 1 - patternCount];
+
+        long long total = towerHeights[countAt % patternCount - 1] + (countAt / patternCount) * diff;
+        output << total;
+    }
+private:
+    const int TOWER_WIDTH = 7;
+
+    long long yOffset = 0;
+
+    enum RockShape
+    {
+        Flat = 0,
+        Cross,
+        L,
+        Tall,
+        Block
+    };
+    
+    int CurrentRock = Flat;
+
+    typedef deque<vector<char>> Grid;
+    Grid grid;
+
+    void addRow()
+    {
+        grid.emplace_back();
+        grid.back().resize(TOWER_WIDTH, '.');
+
+        const int ADJUST = 1000;
+
+        if (grid.size() > ADJUST*2)
+        {
+            for (int i = 0; i < ADJUST; ++i)
+            {
+                grid.pop_front();
+            }
+
+            yOffset += ADJUST;
+        }
+    }
+
+    static vector<vector<char>>* FlatShape;
+    static vector<vector<char>>* CrossShape;
+    static vector<vector<char>>* LShape;
+    static vector<vector<char>>* TallShape;
+    static vector<vector<char>>* BlockShape;
+
+    struct Rock
+    {
+        RockShape shape;
+        int x; // Left
+        long long y; // Bottom
+
+        int width;
+        int height;
+
+        const vector<vector<char>>& pixels()
+        {
+            switch (shape)
+            {
+            case Flat:
+                return *FlatShape;
+            case Cross:
+                return *CrossShape;
+            case L:
+                return *LShape;
+            case Tall:
+                return *TallShape;
+            case Block:
+                return *BlockShape;
+            default:
+                return *FlatShape;
+            }
+        }
+    };
+
+    static void initRockShapes()
+    {
+        FlatShape = new vector<vector<char>>();
+        FlatShape->emplace_back();
+        FlatShape->back().resize(4, '#');
+
+        CrossShape = new vector<vector<char>>();
+        CrossShape->emplace_back();
+        CrossShape->back().resize(3, '.');
+        CrossShape->back()[1] = '#';
+        CrossShape->emplace_back();
+        CrossShape->back().resize(3, '#');
+        CrossShape->emplace_back();
+        CrossShape->back().resize(3, '.');
+        CrossShape->back()[1] = '#';
+
+        LShape = new vector<vector<char>>();
+        LShape->emplace_back();
+        LShape->back().resize(3, '#');
+        LShape->emplace_back();
+        LShape->back().resize(3, '.');
+        LShape->back()[2] = '#';
+        LShape->emplace_back();
+        LShape->back().resize(3, '.');
+        LShape->back()[2] = '#';
+
+        TallShape = new vector<vector<char>>();
+        TallShape->emplace_back();
+        TallShape->back().emplace_back('#');
+        TallShape->emplace_back();
+        TallShape->back().emplace_back('#');
+        TallShape->emplace_back();
+        TallShape->back().emplace_back('#');
+        TallShape->emplace_back();
+        TallShape->back().emplace_back('#');
+
+        BlockShape = new vector<vector<char>>();
+        BlockShape->emplace_back();
+        BlockShape->back().resize(2, '#');
+        BlockShape->emplace_back();
+        BlockShape->back().resize(2, '#');
+    }
+
+    void spawnRock(Rock& rock)
+    {
+        rock.shape = (RockShape)CurrentRock;
+        rock.x = 2;
+        rock.y = getTowerHeight() + 3;
+
+        switch (rock.shape)
+        {
+        case Flat:
+            rock.width = 4;
+            rock.height = 1;
+            break;
+        case Cross:
+            rock.width = 3;
+            rock.height = 3;
+            break;
+        case L:
+            rock.width = 3;
+            rock.height = 3;
+            break;
+        case Tall:
+            rock.width = 1;
+            rock.height = 4;
+            break;
+        case Block:
+            rock.width = 2;
+            rock.height = 2;
+            break;
+        }
+
+        if (++CurrentRock > Block)
+        {
+            CurrentRock = Flat;
+        }
+
+        long long addedHeight = (rock.y + rock.height + 3) - (grid.size() + yOffset);
+        for (int i = 0; i < addedHeight; ++i)
+            addRow();
+    }
+
+    long long getTowerHeight()
+    {
+        for (int y = grid.size() - 1; y >= 0; --y)
+        {
+            for (int x = 0; x < TOWER_WIDTH; ++x)
+            {
+                if (grid[y][x] != '.')
+                {
+                    return y + 1 + yOffset;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    bool moveRock(Rock& rock, int xDir, int yDir)
+    {
+        int newX = rock.x + xDir;
+        long long newY = rock.y + yDir;
+
+        if (newX < 0 || newX + rock.width > TOWER_WIDTH)
+        {
+            return false;
+        }
+        if (newY < 0)
+        {
+            return false;
+        }
+
+        for (int y = 0; y < rock.height; ++y)
+        {
+            for(int x = 0; x < rock.width; ++x)
+            {
+                if (grid[y + newY - yOffset][x + newX] != '.' && rock.pixels()[y][x] != '.')
+                {
+                    return false;
+                }
+            }
+        }
+
+        rock.x = newX;
+        rock.y = newY;
+
+        return true;
+    }
+
+    void settleRock(Rock& rock)
+    {
+        long long yAdjust = 0;
+        for (int y = 0; y < rock.height; ++y)
+        {
+            for (int x = 0; x < rock.width; ++x)
+            {
+                if (rock.pixels()[y][x] != '.')
+                {
+                    grid[y + rock.y - yOffset][x + rock.x] = '#';
+                }
+            }
+        }
+    }
+
+    int getPatternCount(vector<long long> values, long long maxValue, int& currentPatternCount)
+    {
+        if (maxValue < 15)
+            return 0;
+
+        int numToCheck = 5;
+
+        bool matched = false;
+        while (!matched && currentPatternCount * 4 < maxValue)
+        {
+            matched = true;
+            for (int i = 0; i < currentPatternCount; ++i)
+            {
+                int diffOne = values[i + 2 * currentPatternCount] - values[i + currentPatternCount];
+                int diffTwo = values[i + 3 * currentPatternCount] - values[i + 2 * currentPatternCount];
+
+                if (diffOne != diffTwo)
+                    matched = false;
+            }
+
+            if (!matched)
+            {
+                currentPatternCount++;
+            }
+            else
+            {
+                return currentPatternCount;
+            }
+        }
+
+        return 0;
+    }
+
+    void print()
+    {
+        for (int y = (int)grid.size() - 1; y >= 0; --y)
+        {
+            for (int x = 0; x < TOWER_WIDTH; ++x)
+            {
+                cout << grid[y][x];
+            }
+            cout << endl;
+        }
+    }
+};
+
+vector<vector<char>>* DaySeventeen::FlatShape = nullptr;
+vector<vector<char>>* DaySeventeen::CrossShape = nullptr;
+vector<vector<char>>* DaySeventeen::LShape = nullptr;
+vector<vector<char>>* DaySeventeen::TallShape = nullptr;
+vector<vector<char>>* DaySeventeen::BlockShape = nullptr;
+
+/*
  * Main
  */
 
@@ -2182,6 +3879,12 @@ int main()
     days.push_back(new DayTen());
     days.push_back(new DayEleven());
     days.push_back(new DayTwelve());
+    days.push_back(new DayThirteen());
+    days.push_back(new DayFourteen());
+    days.push_back(new DayFifteen());
+    days.push_back(new DaySixteen());
+    days.push_back(new DaySeventeen());
+
 
     if (TEST_PERFORMANCE)
     {
@@ -2202,8 +3905,8 @@ int main()
     }
     else
     {
-        DayTwelve test;
-        test.runTest("input\\Day12_TestInput.txt");
+        DaySeventeen test;
+        test.runTest("input\\Day17_TestInput.txt");
 
         days[days.size() - 1]->run();
     }
