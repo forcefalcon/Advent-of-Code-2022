@@ -158,26 +158,6 @@
   <ItemGroup>
     <ClInclude Include="DayBase.h" />
     <ClInclude Include="Helpers.h" />
-    <ClInclude Include="solutions\Day1.h" />
-    <ClInclude Include="solutions\Day10.h" />
-    <ClInclude Include="solutions\Day11.h" />
-    <ClInclude Include="solutions\Day12.h" />
-    <ClInclude Include="solutions\Day13.h" />
-    <ClInclude Include="solutions\Day14.h" />
-    <ClInclude Include="solutions\Day15.h" />
-    <ClInclude Include="solutions\Day16.h" />
-    <ClInclude Include="solutions\Day17.h" />
-    <ClInclude Include="solutions\Day18.h" />
-    <ClInclude Include="solutions\Day19.h" />
-    <ClInclude Include="solutions\Day2.h" />
-    <ClInclude Include="solutions\Day3.h" />
-    <ClInclude Include="solutions\Day4.h" />
-    <ClInclude Include="solutions\Day5.h" />
-    <ClInclude Include="solutions\Day6.h" />
-    <ClInclude Include="solutions\Day7.h" />
-    <ClInclude Include="solutions\Day8.h" />
-    <ClInclude Include="solutions\Day9.h" />
-    <ClInclude Include="solutions\DayTemplate.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

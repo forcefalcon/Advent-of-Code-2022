@@ -1,49 +1,169 @@
-#include "Day9.h"
+#include <Helpers.h>
+#include <DayBase.h>
 
-void calculateTail(const int headX, const int headY, int& tailX, int& tailY)
+/**
+* DayNine
+*
+* This is a the solution for Day Nine of Advent of Code 2022.
+* https://adventofcode.com/2022/day/9
+*
+*/
+class DayNine : public DayBase
 {
-    if (headY > tailY + 1)
-    {
-        tailY = headY - 1;
-        if (headX != tailX)
-        {
-            int diff = headX - tailX;
+public:
+    DayNine()
+        : DayBase(9)
+    {}
 
-            tailX += sign(diff);
+protected:
+    virtual void questionOne(istream& input, ostream& output)
+    {
+        string line;
+
+        int totalCount = 0;
+        set<string> moves;
+
+        int headX = 0; int headY = 0; int tailX = 0; int tailY = 0;
+        moves.insert("0,0");
+
+        stringstream ss;
+        while (getline(input, line))
+        {
+            int moveCount = atoi(line.substr(2).c_str());
+
+            for (int i = 0; i < moveCount; ++i)
+            {
+                switch (line[0])
+                {
+                case 'R':
+                    headX++;
+                    break;
+                case 'L':
+                    headX--;
+                    break;
+                case 'U':
+                    headY++;
+                    break;
+                case 'D':
+                    headY--;
+                    break;
+                }
+
+                calculateTail(headX, headY, tailX, tailY);
+                ss << tailX << "," << tailY;
+                moves.insert(ss.str());
+                ss.str(string());
+            }
+        }
+
+        output << moves.size();
+    }
+
+    virtual void questionTwo(istream& input, ostream& output)
+    {
+        string line;
+
+        int totalCount = 0;
+        set<string> moves;
+
+        const int NUM_KNOTS = 10;
+        int X[NUM_KNOTS];
+        int Y[NUM_KNOTS];
+        moves.insert("0,0");
+
+        for (int i = 0; i < NUM_KNOTS; ++i)
+        {
+            X[i] = 0;
+            Y[i] = 0;
+        }
+
+        stringstream ss;
+        while (getline(input, line))
+        {
+            int moveCount = atoi(line.substr(2).c_str());
+
+            for (int i = 0; i < moveCount; ++i)
+            {
+                switch (line[0])
+                {
+                case 'R':
+                    X[0]++;
+                    break;
+                case 'L':
+                    X[0]--;
+                    break;
+                case 'U':
+                    Y[0]++;
+                    break;
+                case 'D':
+                    Y[0]--;
+                    break;
+                }
+
+                for (int i = 0; i < NUM_KNOTS - 1; ++i)
+                {
+                    calculateTail(X[i], Y[i], X[i + 1], Y[i + 1]);
+                }
+                ss << X[9] << "," << Y[9];
+                moves.insert(ss.str());
+                ss.str(string());
+            }
+        }
+
+        output << moves.size();
+    }
+
+private:
+    void calculateTail(const int headX, const int headY, int& tailX, int& tailY)
+    {
+        if (headY > tailY + 1)
+        {
+            tailY = headY - 1;
+            if (headX != tailX)
+            {
+                int diff = headX - tailX;
+
+                tailX += sign(diff);
+            }
+        }
+        else if (headY < tailY - 1)
+        {
+            tailY = headY + 1;
+            if (headX != tailX)
+            {
+                int diff = headX - tailX;
+
+                tailX += sign(diff);
+            }
+        }
+        else if (headX > tailX + 1)
+        {
+            tailX = headX - 1;
+            if (headY != tailY)
+            {
+                int diff = headY - tailY;
+
+                tailY += sign(diff);
+            }
+        }
+        else if (headX < tailX - 1)
+        {
+            tailX = headX + 1;
+            if (headY != tailY)
+            {
+                int diff = headY - tailY;
+
+                tailY += sign(diff);
+            }
         }
     }
-    else if (headY < tailY - 1)
-    {
-        tailY = headY + 1;
-        if (headX != tailX)
-        {
-            int diff = headX - tailX;
+};
 
-            tailX += sign(diff);
-        }
-    }
-    else if (headX > tailX + 1)
-    {
-        tailX = headX - 1;
-        if (headY != tailY)
-        {
-            int diff = headY - tailY;
+DayNine g_dayNine = DayNine();
 
-            tailY += sign(diff);
-        }
-    }
-    else if (headX < tailX - 1)
-    {
-        tailX = headX + 1;
-        if (headY != tailY)
-        {
-            int diff = headY - tailY;
 
-            tailY += sign(diff);
-        }
-    }
-}
-
+// Updated code for faster algorithm
+    
 //void calculateTailTake2(const int headX, const int headY, int& tailX, int& tailY)
 //{
 //    int diffX = headX - tailX;
@@ -69,103 +189,6 @@ void calculateTail(const int headX, const int headY, int& tailX, int& tailY)
 //        }
 //    }
 //}
-
-void DayNine::questionOne(istream& input, ostream& output)
-{
-    string line;
-
-    int totalCount = 0;
-    set<string> moves;
-
-    int headX = 0; int headY = 0; int tailX = 0; int tailY = 0;
-    moves.insert("0,0");
-
-    stringstream ss;
-    while (getline(input, line))
-    {
-        int moveCount = atoi(line.substr(2).c_str());
-
-        for (int i = 0; i < moveCount; ++i)
-        {
-            switch (line[0])
-            {
-            case 'R':
-                headX++;
-                break;
-            case 'L':
-                headX--;
-                break;
-            case 'U':
-                headY++;
-                break;
-            case 'D':
-                headY--;
-                break;
-            }
-
-            calculateTail(headX, headY, tailX, tailY);
-            ss << tailX << "," << tailY;
-            moves.insert(ss.str());
-            ss.str(string());
-        }
-    }
-
-    output << moves.size();
-}
-
-void DayNine::questionTwo(istream& input, ostream& output)
-{
-    string line;
-
-    int totalCount = 0;
-    set<string> moves;
-
-    const int NUM_KNOTS = 10;
-    int X[NUM_KNOTS];
-    int Y[NUM_KNOTS];
-    moves.insert("0,0");
-
-    for (int i = 0; i < NUM_KNOTS; ++i)
-    {
-        X[i] = 0;
-        Y[i] = 0;
-    }
-
-    stringstream ss;
-    while (getline(input, line))
-    {
-        int moveCount = atoi(line.substr(2).c_str());
-
-        for (int i = 0; i < moveCount; ++i)
-        {
-            switch (line[0])
-            {
-            case 'R':
-                X[0]++;
-                break;
-            case 'L':
-                X[0]--;
-                break;
-            case 'U':
-                Y[0]++;
-                break;
-            case 'D':
-                Y[0]--;
-                break;
-            }
-
-            for (int i = 0; i < NUM_KNOTS - 1; ++i)
-            {
-                calculateTail(X[i], Y[i], X[i + 1], Y[i + 1]);
-            }
-            ss << X[9] << "," << Y[9];
-            moves.insert(ss.str());
-            ss.str(string());
-        }
-    }
-
-    output << moves.size();
-}
 
 //void Day9Q1Take2(istream& input)
 //{

@@ -1,154 +1,173 @@
-#include "Day5.h"
+#include <Helpers.h>
+#include <DayBase.h>
 
-void DayFive::questionOne(istream& input, ostream& output)
+/**
+* DayFive
+*
+* This is a the solution for Day Five of Advent of Code 2022.
+* https://adventofcode.com/2022/day/5
+*
+*/
+class DayFive : public DayBase
 {
-    string line;
+public:
+    DayFive()
+        : DayBase(5)
+    {}
 
-    vector<string> inputStacks;
-    while (getline(input, line))
+protected:
+    virtual void questionOne(istream& input, ostream& output)
     {
-        if (line.empty())
+        string line;
+
+        vector<string> inputStacks;
+        while (getline(input, line))
         {
-            break;
-        }
-
-        inputStacks.emplace_back(line);
-    }
-
-    size_t totalStacks = (inputStacks.back().length() + 1) / 4;
-    inputStacks.pop_back();
-
-    vector<stack<char>> stacks;
-    stacks.resize(totalStacks);
-
-    while (!inputStacks.empty())
-    {
-        string inputStack = inputStacks.back();
-
-        int charPos = 1;
-        for (int i = 0; i < totalStacks; ++i)
-        {
-            char box = inputStack[charPos];
-
-            if (box != ' ')
-                stacks[i].push(box);
-
-            charPos += 4;
-        }
-
-        inputStacks.pop_back();
-    }
-
-    while (getline(input, line))
-    {
-        size_t startOffset = 5;
-        size_t endOffset = line.find(' ', startOffset);
-        int moveNum = atoi(line.substr(startOffset, endOffset - startOffset).c_str());
-
-        startOffset = endOffset + 6;
-        endOffset = line.find(' ', startOffset);
-        int startStack = atoi(line.substr(startOffset, endOffset - startOffset).c_str()) - 1;
-
-        startOffset = endOffset + 4;
-        int endStack = atoi(line.substr(startOffset).c_str()) - 1;
-
-        //cout << moveNum << ":" << startStack << "->" << endStack << '\n';
-
-        for (int i = 0; i < moveNum; ++i)
-        {
-            if (stacks[startStack].empty())
+            if (line.empty())
             {
-                cerr << "Empty Stack!" << '\n';
                 break;
             }
 
-            stacks[endStack].push(stacks[startStack].top());
-            stacks[startStack].pop();
+            inputStacks.emplace_back(line);
         }
-    }
 
-    for (int i = 0; i < totalStacks; ++i)
-    {
-        output << stacks[i].top();
-    }
-}
+        size_t totalStacks = (inputStacks.back().length() + 1) / 4;
+        inputStacks.pop_back();
 
-void DayFive::questionTwo(istream& input, ostream& output)
-{
-    string line;
+        vector<stack<char>> stacks;
+        stacks.resize(totalStacks);
 
-    vector<string> inputStacks;
-    while (getline(input, line))
-    {
-        if (line.empty())
+        while (!inputStacks.empty())
         {
-            break;
+            string inputStack = inputStacks.back();
+
+            int charPos = 1;
+            for (int i = 0; i < totalStacks; ++i)
+            {
+                char box = inputStack[charPos];
+
+                if (box != ' ')
+                    stacks[i].push(box);
+
+                charPos += 4;
+            }
+
+            inputStacks.pop_back();
         }
 
-        inputStacks.emplace_back(line);
-    }
+        while (getline(input, line))
+        {
+            size_t startOffset = 5;
+            size_t endOffset = line.find(' ', startOffset);
+            int moveNum = atoi(line.substr(startOffset, endOffset - startOffset).c_str());
 
-    size_t totalStacks = (inputStacks.back().length() + 1) / 4;
-    inputStacks.pop_back();
+            startOffset = endOffset + 6;
+            endOffset = line.find(' ', startOffset);
+            int startStack = atoi(line.substr(startOffset, endOffset - startOffset).c_str()) - 1;
 
-    vector<stack<char>> stacks;
-    stacks.resize(totalStacks);
+            startOffset = endOffset + 4;
+            int endStack = atoi(line.substr(startOffset).c_str()) - 1;
 
-    while (!inputStacks.empty())
-    {
-        string inputStack = inputStacks.back();
+            //cout << moveNum << ":" << startStack << "->" << endStack << '\n';
 
-        int charPos = 1;
+            for (int i = 0; i < moveNum; ++i)
+            {
+                if (stacks[startStack].empty())
+                {
+                    cerr << "Empty Stack!" << '\n';
+                    break;
+                }
+
+                stacks[endStack].push(stacks[startStack].top());
+                stacks[startStack].pop();
+            }
+        }
+
         for (int i = 0; i < totalStacks; ++i)
         {
-            char box = inputStack[charPos];
-
-            if (box != ' ')
-                stacks[i].push(box);
-
-            charPos += 4;
+            output << stacks[i].top();
         }
-
-        inputStacks.pop_back();
     }
 
-    while (getline(input, line))
+    virtual void questionTwo(istream& input, ostream& output)
     {
-        size_t startOffset = 5;
-        size_t endOffset = line.find(' ', startOffset);
-        int moveNum = atoi(line.substr(startOffset, endOffset - startOffset).c_str());
+        string line;
 
-        startOffset = endOffset + 6;
-        endOffset = line.find(' ', startOffset);
-        int startStack = atoi(line.substr(startOffset, endOffset - startOffset).c_str()) - 1;
-
-        startOffset = endOffset + 4;
-        int endStack = atoi(line.substr(startOffset).c_str()) - 1;
-
-        //cout << moveNum << ":" << startStack << "->" << endStack << '\n';
-
-        stack<int> tempStack;
-        for (int i = 0; i < moveNum; ++i)
+        vector<string> inputStacks;
+        while (getline(input, line))
         {
-            if (stacks[startStack].empty())
+            if (line.empty())
             {
-                cerr << "Empty Stack!" << '\n';
                 break;
             }
 
-            tempStack.push(stacks[startStack].top());
-            stacks[startStack].pop();
+            inputStacks.emplace_back(line);
         }
 
-        for (int i = 0; i < moveNum; ++i)
+        size_t totalStacks = (inputStacks.back().length() + 1) / 4;
+        inputStacks.pop_back();
+
+        vector<stack<char>> stacks;
+        stacks.resize(totalStacks);
+
+        while (!inputStacks.empty())
         {
-            stacks[endStack].push(tempStack.top());
-            tempStack.pop();
+            string inputStack = inputStacks.back();
+
+            int charPos = 1;
+            for (int i = 0; i < totalStacks; ++i)
+            {
+                char box = inputStack[charPos];
+
+                if (box != ' ')
+                    stacks[i].push(box);
+
+                charPos += 4;
+            }
+
+            inputStacks.pop_back();
+        }
+
+        while (getline(input, line))
+        {
+            size_t startOffset = 5;
+            size_t endOffset = line.find(' ', startOffset);
+            int moveNum = atoi(line.substr(startOffset, endOffset - startOffset).c_str());
+
+            startOffset = endOffset + 6;
+            endOffset = line.find(' ', startOffset);
+            int startStack = atoi(line.substr(startOffset, endOffset - startOffset).c_str()) - 1;
+
+            startOffset = endOffset + 4;
+            int endStack = atoi(line.substr(startOffset).c_str()) - 1;
+
+            //cout << moveNum << ":" << startStack << "->" << endStack << '\n';
+
+            stack<int> tempStack;
+            for (int i = 0; i < moveNum; ++i)
+            {
+                if (stacks[startStack].empty())
+                {
+                    cerr << "Empty Stack!" << '\n';
+                    break;
+                }
+
+                tempStack.push(stacks[startStack].top());
+                stacks[startStack].pop();
+            }
+
+            for (int i = 0; i < moveNum; ++i)
+            {
+                stacks[endStack].push(tempStack.top());
+                tempStack.pop();
+            }
+        }
+
+        for (int i = 0; i < totalStacks; ++i)
+        {
+            output << stacks[i].top();
         }
     }
+};
 
-    for (int i = 0; i < totalStacks; ++i)
-    {
-        output << stacks[i].top();
-    }
-}
+DayFive g_dayFive = DayFive();

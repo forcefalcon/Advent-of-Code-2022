@@ -1,8 +1,15 @@
 #include "DayBase.h"
 
-DayBase::DayBase(string day)
+DayBase::DayBase(int day)
     : day(day)
 {
+    if (day == 0) // DayTemplate
+        return;
+
+    if (g_days.size() <= day)
+        g_days.resize(day);
+    g_days[day - 1] = this;
+
     stringstream ss;
     ss << "input\\Day" << day << "_Input.txt";
     input.open(ss.str());
@@ -115,3 +122,5 @@ long long DayBase::testPerformance(bool test /*= false*/)
 
     return total;
 }
+
+vector<DayBase*> g_days;

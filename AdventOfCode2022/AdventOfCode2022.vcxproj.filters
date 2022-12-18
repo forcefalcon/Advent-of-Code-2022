@@ -16,9 +16,6 @@
     <Filter Include="Source Files\Solutions">
       <UniqueIdentifier>{8e253803-bec4-4301-a16a-6683ae8061d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Solutions">
-      <UniqueIdentifier>{82842232-0b71-49c0-9d71-45d38a138949}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -97,66 +94,6 @@
     </ClInclude>
     <ClInclude Include="DayBase.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\DayTemplate.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day8.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day9.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day10.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day1.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day2.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day3.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day4.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day5.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day6.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day7.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day15.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day16.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day17.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day11.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day12.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day13.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day14.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day18.h">
-      <Filter>Header Files\Solutions</Filter>
-    </ClInclude>
-    <ClInclude Include="solutions\Day19.h">
-      <Filter>Header Files\Solutions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

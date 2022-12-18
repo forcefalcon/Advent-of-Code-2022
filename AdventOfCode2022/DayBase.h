@@ -5,7 +5,7 @@
 class DayBase
 {
 public:
-    DayBase(string day);
+    DayBase(int day);
     virtual ~DayBase();
 
     void run();
@@ -17,7 +17,8 @@ protected:
     virtual void questionTwo(istream& input, ostream& output) = 0;
 
 private:
-    string day;
+
+    int day;
     ifstream input;
     ifstream testInput;
     ifstream testInputTwo;
@@ -30,3 +31,5 @@ private:
         input.seekg(0, std::ios::beg);
     }
 };
+
+extern vector<DayBase*> g_days;
