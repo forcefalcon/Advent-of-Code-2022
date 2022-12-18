@@ -87,6 +87,9 @@
     <ClCompile Include="solutions\Day18.cpp">
       <Filter>Source Files\Solutions</Filter>
     </ClCompile>
+    <ClCompile Include="solutions\Day19.cpp">
+      <Filter>Source Files\Solutions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Helpers.h">
@@ -150,6 +153,9 @@
       <Filter>Header Files\Solutions</Filter>
     </ClInclude>
     <ClInclude Include="solutions\Day18.h">
+      <Filter>Header Files\Solutions</Filter>
+    </ClInclude>
+    <ClInclude Include="solutions\Day19.h">
       <Filter>Header Files\Solutions</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,17 +4,17 @@
 #include <DayBase.h>
 
 /**
-* DaySeventeen
+* DayNineteen
 * 
-* This is a the solution for Day Seventeen of Advent of Code 2022.
-* https://adventofcode.com/2022/day/17
+* This is a the solution for Day Nineteen of Advent of Code 2022.
+* https://adventofcode.com/2022/day/19
 * 
 */
-class DaySeventeen : public DayBase
+class DayNineteen : public DayBase
 {
 public:
-	DaySeventeen()
-		: DayBase("17")
+	DayNineteen()
+		: DayBase("19")
 	{}
 
 protected:

@@ -1,13 +1,29 @@
 #include "DayBase.h"
 
-DayBase::DayBase(string day, string inputFile)
+DayBase::DayBase(string day)
     : day(day)
 {
-    input.open(inputFile);
+    stringstream ss;
+    ss << "input\\Day" << day << "_Input.txt";
+    input.open(ss.str());
+
+    ss.str("");
+
+    ss << "input\\Day" << day << "_TestInput.txt";
+    testInput.open(ss.str());
+
+    ss.str("");
+
+    ss << "input\\Day" << day << "_TestInput2.txt";
+    testInputTwo.open(ss.str());
 }
 
 DayBase::~DayBase()
 {
+    if (testInputTwo.is_open())
+        testInputTwo.close();
+
+    testInput.close();
     input.close();
 }
 
@@ -31,11 +47,8 @@ void DayBase::run()
     cout << output.str();
 }
 
-void DayBase::runTest(string testFileOne, string testFileTwo /*= ""*/)
+void DayBase::runTest()
 {
-    ifstream testInput;
-    testInput.open(testFileOne);
-
     stringstream output;
     output << "Day " << day << " Test\n";
     output << "----------\n";
@@ -44,43 +57,38 @@ void DayBase::runTest(string testFileOne, string testFileTwo /*= ""*/)
     questionOne(testInput, output);
     output << "\n\n";
 
-    if (testFileTwo.empty())
+    if (!testInputTwo.is_open())
     {
         resetInput(testInput);
-    }
-    else
-    {
-        testInput.close();
-        testInput.open(testFileTwo);
     }
 
     output << "Question 2\n";
     output << "Answer: ";
-    questionTwo(testInput, output);
+    questionTwo(testInputTwo.is_open() ? testInputTwo : testInput, output);
     output << "\n\n";
 
     cout << output.str();
-
-    testInput.close();
 }
 
-long long DayBase::testPerformance()
+long long DayBase::testPerformance(bool test /*= false*/)
 {
     const int RUN_COUNT = 100;
 
     stringstream output;
     long long total = 0;
 
-    cout << "Day " << day << "\n";
+    cout << "Day " << day << (test ? " Test" : "") << "\n";
     cout << "----------\n";
     cout << "Question 1\n";
 
     auto start = chrono::high_resolution_clock::now();
 
+    ifstream& q1Input = test ? testInput : input;
+
     for (int i = 0; i < RUN_COUNT; ++i)
     {
-        questionOne(input, output);
-        resetInput(input);
+        questionOne(q1Input, output);
+        resetInput(q1Input);
     }
 
     auto elapsed = chrono::high_resolution_clock::now() - start;
@@ -93,10 +101,12 @@ long long DayBase::testPerformance()
 
     start = chrono::high_resolution_clock::now();
 
+    ifstream& q2Input = test ? (testInputTwo.is_open() ? testInputTwo : testInput) : input;
+
     for (int i = 0; i < RUN_COUNT; ++i)
     {
-        questionTwo(input, output);
-        resetInput(input);
+        questionTwo(q2Input, output);
+        resetInput(q2Input);
     }
 
     elapsed = chrono::high_resolution_clock::now() - start;

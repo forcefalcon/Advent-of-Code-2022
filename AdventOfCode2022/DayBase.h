@@ -5,12 +5,12 @@
 class DayBase
 {
 public:
-    DayBase(string day, string inputFile);
+    DayBase(string day);
     virtual ~DayBase();
 
     void run();
-    void runTest(string testFileOne, string testFileTwo = "");
-    long long testPerformance();
+    void runTest();
+    long long testPerformance(bool test = false);
 
 protected:
     virtual void questionOne(istream& input, ostream& output) = 0;
@@ -20,6 +20,7 @@ private:
     string day;
     ifstream input;
     ifstream testInput;
+    ifstream testInputTwo;
 
     virtual void resetData() {}
 

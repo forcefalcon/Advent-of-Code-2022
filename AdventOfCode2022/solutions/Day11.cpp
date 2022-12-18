@@ -223,20 +223,6 @@ void DayEleven::questionTwo(istream& input, ostream& output)
                 current->inspected++;
             }
         }
-
-
-        if (round == 0)
-        {
-            cout << "Test" << endl;
-        }
-        else if (round == 19)
-        {
-            cout << "Test" << endl;
-        }
-        else if (round == 999)
-        {
-            cout << "Test" << endl;
-        }
     }
 
     unsigned long long one = 0;

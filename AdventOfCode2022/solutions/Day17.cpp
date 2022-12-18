@@ -116,7 +116,7 @@ static void initRockShapes()
 
 long long getTowerHeight()
 {
-    for (int y = grid.size() - 1; y >= 0; --y)
+    for (int y = (int)grid.size() - 1; y >= 0; --y)
     {
         for (int x = 0; x < TOWER_WIDTH; ++x)
         {
@@ -229,8 +229,8 @@ int getPatternCount(vector<long long> values, long long maxValue, int& currentPa
         matched = true;
         for (int i = 0; i < currentPatternCount; ++i)
         {
-            int diffOne = values[i + 2 * currentPatternCount] - values[i + currentPatternCount];
-            int diffTwo = values[i + 3 * currentPatternCount] - values[i + 2 * currentPatternCount];
+            long long diffOne = values[i + 2 * currentPatternCount] - values[i + currentPatternCount];
+            long long diffTwo = values[i + 3 * currentPatternCount] - values[i + 2 * currentPatternCount];
 
             if (diffOne != diffTwo)
                 matched = false;

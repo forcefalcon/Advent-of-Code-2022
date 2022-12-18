@@ -14,7 +14,7 @@ class DaySixteen : public DayBase
 {
 public:
 	DaySixteen()
-		: DayBase("Sixteen", "input\\Day16_Input.txt")
+		: DayBase("16")
 	{}
 
 protected:

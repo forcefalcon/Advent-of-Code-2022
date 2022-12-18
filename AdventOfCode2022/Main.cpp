@@ -22,6 +22,7 @@
 #include <solutions/Day16.h>
 #include <solutions/Day17.h>
 #include <solutions/Day18.h>
+#include <solutions/Day19.h>
 
 /*
  * Main
@@ -29,7 +30,8 @@
 
 int main()
 {
-    const bool TEST_PERFORMANCE = false;
+    const bool TEST_PERFORMANCE = true;
+    const bool USE_TEST_DATA = true;
     const bool RUN_ALL = false;
 
     vector<DayBase*> days;
@@ -51,6 +53,7 @@ int main()
     days.push_back(new DaySixteen());
     days.push_back(new DaySeventeen());
     days.push_back(new DayEighteen());
+    days.push_back(new DayNineteen());
 
 
     if (TEST_PERFORMANCE)
@@ -58,7 +61,7 @@ int main()
         long long total = 0;
         for (int i = 0; i < days.size(); ++i)
         {
-            total += days[i]->testPerformance();
+            total += days[i]->testPerformance(USE_TEST_DATA);
         }
 
         cout << "Total Time:" << total / 1000.0f << "ms" << endl;
@@ -67,14 +70,12 @@ int main()
     {
         for(int i = 0; i < days.size(); ++ i)
         {
-            days[i]->run();
+            USE_TEST_DATA ? days[i]->runTest() : days[i]->run();
         }
     }
     else
     {
-        DayEighteen test;
-        test.runTest("input\\Day18_TestInput.txt");
-
+        days[days.size() - 1]->runTest();
         days[days.size() - 1]->run();
     }
 
