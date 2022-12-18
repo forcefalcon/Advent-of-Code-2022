@@ -21,6 +21,7 @@
 #include <solutions/Day15.h>
 #include <solutions/Day16.h>
 #include <solutions/Day17.h>
+#include <solutions/Day18.h>
 
 /*
  * Main
@@ -49,6 +50,7 @@ int main()
     days.push_back(new DayFifteen());
     days.push_back(new DaySixteen());
     days.push_back(new DaySeventeen());
+    days.push_back(new DayEighteen());
 
 
     if (TEST_PERFORMANCE)
@@ -70,8 +72,8 @@ int main()
     }
     else
     {
-        DaySeventeen test;
-        test.runTest("input\\Day17_TestInput.txt");
+        DayEighteen test;
+        test.runTest("input\\Day18_TestInput.txt");
 
         days[days.size() - 1]->run();
     }
