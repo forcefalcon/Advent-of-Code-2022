@@ -100,7 +100,15 @@ long long DayBase::testPerformance(bool test /*= false*/)
 
     auto elapsed = chrono::high_resolution_clock::now() - start;
     long long microseconds = std::chrono::duration_cast<chrono::microseconds>(elapsed).count() / RUN_COUNT;
-    cout << "Avg Time: " << microseconds << "us" << "\n";
+    cout << "Avg Time: ";
+    if (microseconds > 1000)
+    {
+        cout << (microseconds / 1000.f) << "ms" << "\n\n";
+    }
+    else
+    {
+        cout << microseconds << "us" << "\n\n";
+    }
 
     total += microseconds;
 
@@ -118,7 +126,15 @@ long long DayBase::testPerformance(bool test /*= false*/)
 
     elapsed = chrono::high_resolution_clock::now() - start;
     microseconds = std::chrono::duration_cast<chrono::microseconds>(elapsed).count() / RUN_COUNT;
-    cout << "Avg Time: " << microseconds << "us" << "\n\n";
+    cout << "Avg Time: ";
+    if (microseconds > 1000)
+    {
+        cout << (microseconds / 1000.f) << "ms" << "\n\n";
+    }
+    else
+    {
+        cout << microseconds << "us" << "\n\n";
+    }
 
     return total;
 }
