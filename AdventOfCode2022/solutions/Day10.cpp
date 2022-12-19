@@ -100,11 +100,9 @@ private:
 
     void drawPixel(int& cycle, const int currentX, ostream& stream)
     {
-        cycle++;
-
         int horizontalPos = (cycle % 40);
 
-        if (horizontalPos >= currentX && horizontalPos <= currentX + 2)
+        if (horizontalPos >= currentX - 1 && horizontalPos <= currentX + 1)
         {
             stream << "#";
         }
@@ -113,10 +111,12 @@ private:
             stream << ".";
         }
 
-        if (horizontalPos == 0)
+        if (horizontalPos == 39)
         {
             stream << "\n";
         }
+
+        cycle++;
     }
 };
 
