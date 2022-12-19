@@ -18,7 +18,7 @@ int main()
     const char DATA_TO_USE = Regular | Test;
     const bool TEST_PERFORMANCE = false;
     const bool RUN_ALL = false;
-    const int RUN_SPECIFIC = 0;
+    const int RUN_SPECIFIC = 1;
 
     if (RUN_ALL)
     {

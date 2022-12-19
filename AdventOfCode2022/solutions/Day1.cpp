@@ -80,6 +80,23 @@ protected:
             }
         }
 
+        // Check last one
+        if (current > first)
+        {
+            third = second;
+            second = first;
+            first = current;
+        }
+        else if (current > second)
+        {
+            third = second;
+            second = current;
+        }
+        else if (current > third)
+        {
+            third = current;
+        }
+
         output << (first + second + third);
     }
 };
