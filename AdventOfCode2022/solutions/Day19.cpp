@@ -24,10 +24,10 @@ protected:
 		for (int i = 0; i < blueprints.size(); ++i)
 		{
 			State state;
-			state.currentBlueprint = i;
-			state = calculateGeodes(24, 0, state);
+			state.currentBlueprint = &blueprints[i];
+			int geodes = calculateGeodes(24, 0, state);
 
-			total += state.resources[Geode] * (i+1);
+			total += geodes * (i+1);
 		}
 
 		output << total;
@@ -41,10 +41,10 @@ protected:
 		for (int i = 0; i < min(3, (int)blueprints.size()); ++i)
 		{
 			State state;
-			state.currentBlueprint = i;
-			state = calculateGeodes(32, 0, state);
+			state.currentBlueprint = &blueprints[i];
+			int geodes = calculateGeodes(32, 0, state);
 
-			total *= state.resources[Geode];
+			total *= geodes;
 		}
 
 		output << total;
@@ -75,11 +75,9 @@ private:
 
 	struct State
 	{
-		int currentBlueprint = 0;
+		const Blueprint* currentBlueprint = nullptr;
 		int robots[NumTypes] = { 1,0,0,0 };
 		int resources[NumTypes] = { 0,0,0,0 };
-
-		//vector<pair<int, int>> purchases;
 	};
 
 	void parse(istream& input)
@@ -106,9 +104,9 @@ private:
 		}
 	}
 
-	State calculateGeodes(int turn, int currentBest, State& state)
+	int calculateGeodes(int turn, int currentBest, State& state)
 	{
-		State bestState(state);
+		int bestState = currentBest;
 
 		if (turn == 0)
 			return bestState;
@@ -122,10 +120,8 @@ private:
 			if (state.robots[Obsidian] == 0)
 				futureTurns--;
 
-			for (int i = futureTurns; i > 0; --i)
-			{
-				possibleBest += i;
-			}
+			possibleBest += futureTurns * (futureTurns + 1) / 2;
+
 			if (possibleBest <= currentBest)
 				return bestState;
 		}
@@ -135,42 +131,29 @@ private:
 		{
 			int turns = turnsToPurchase((ResourceType)i, state);
 
-			//if (i == 2 && turn == 14)
-			//{
-			//	cout << "HERE";
-			//}
-
 			if (turns > 0 && turn - turns > 0)
 			{
 				canPurchase = true;
 
-				State newState(state);
+				State newState = state;
 
 				gatherResources(turns, newState);
 
 				purchaseRobot((ResourceType)i, newState);
 
-				//newState.purchases.emplace_back(24 - (turn - turns), i);
-
-				newState = calculateGeodes(turn - turns, currentBest, newState);
-
-				if (newState.resources[Geode] > bestState.resources[Geode])
-				{
-					bestState = newState;
-					currentBest = bestState.resources[Geode];
-				}
+				bestState = calculateGeodes(turn - turns, bestState, newState);
 			}
 		}
 
 		// Gather Resources until the End
 		if (!canPurchase)
 		{
-			State newState(state);
+			State newState = state;
 			gatherResources(turn, newState);
 
-			if (newState.resources[Geode] > bestState.resources[Geode])
+			if (newState.resources[Geode] > bestState)
 			{
-				bestState = newState;
+				bestState = newState.resources[Geode];
 			}
 		}
 
@@ -189,7 +172,7 @@ private:
 	{
 		for (int i = 0; i < NumTypes-1; ++i)
 		{
-			if (state.resources[i] < blueprints[state.currentBlueprint].costs[type].resource[i])
+			if (state.resources[i] < state.currentBlueprint->costs[type].resource[i])
 			{
 				return false;
 			}
@@ -202,24 +185,48 @@ private:
 	{
 		int maxTurns = 0;
 
-		for (int i = 0; i < NumTypes - 1; ++i)
+		switch (type)
 		{
-			int cost = blueprints[state.currentBlueprint].costs[type].resource[i];
-			
-			if (cost > 0)
+		case Ore:
 			{
-				if (state.robots[i] == 0)
+				int cost = state.currentBlueprint->costs[type].resource[Ore];
+				maxTurns = (cost + state.robots[Ore] - 1 - state.resources[Ore]) / state.robots[Ore];
+			}
+			break;
+		case Clay:
+			{
+				int cost = state.currentBlueprint->costs[type].resource[Ore];
+				maxTurns = (cost + state.robots[Ore] - 1 - state.resources[Ore]) / state.robots[Ore];
+			}
+			break;
+		case Obsidian:
+			{
+				if (state.robots[Clay] == 0)
 					return -1;
 
-				cost = max(0, cost - state.resources[i]);
+				int cost = state.currentBlueprint->costs[type].resource[Ore];
+				int turnsOre = (cost + state.robots[Ore] - 1 - state.resources[Ore]) / state.robots[Ore];
 
-				int turns = cost / state.robots[i];
-				if (cost % state.robots[i])
-					turns++;
+				cost = state.currentBlueprint->costs[type].resource[Clay];
+				int turnsClay = (cost + state.robots[Clay] - 1 - state.resources[Clay]) / state.robots[Clay];
 
-				if (turns > maxTurns)
-					maxTurns = turns;
+				maxTurns = max(turnsOre, turnsClay);
 			}
+			break;
+		case Geode:
+			{
+				if (state.robots[Obsidian] == 0)
+					return -1;
+
+				int cost = state.currentBlueprint->costs[type].resource[Ore];
+				int turnsOre = (cost + state.robots[Ore] - 1 - state.resources[Ore]) / state.robots[Ore];
+
+				cost = state.currentBlueprint->costs[type].resource[Obsidian];
+				int turnsObsidian = (cost + state.robots[Obsidian] - 1 - state.resources[Obsidian]) / state.robots[Obsidian];
+
+				maxTurns = max(turnsOre, turnsObsidian);
+			}
+			break;
 		}
 
 		return maxTurns + 1;
@@ -229,7 +236,7 @@ private:
 	{
 		for (int i = 0; i < NumTypes - 1; ++i)
 		{
-			state.resources[i] -= blueprints[state.currentBlueprint].costs[type].resource[i];
+			state.resources[i] -= state.currentBlueprint->costs[type].resource[i];
 		}
 
 		state.robots[type]++;
