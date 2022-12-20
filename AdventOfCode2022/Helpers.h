@@ -12,6 +12,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include <list>
 
 using namespace std;
 
