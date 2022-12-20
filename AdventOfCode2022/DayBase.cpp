@@ -56,6 +56,8 @@ void DayBase::run()
 
 void DayBase::runTest()
 {
+    bIsTest = true;
+
     stringstream output;
     output << "Day " << day << " Test\n";
     output << "----------\n";
@@ -75,6 +77,8 @@ void DayBase::runTest()
     output << "\n\n";
 
     cout << output.str();
+
+    bIsTest = false;
 }
 
 long long DayBase::testPerformance(bool test /*= false*/)
@@ -83,6 +87,7 @@ long long DayBase::testPerformance(bool test /*= false*/)
 
     stringstream output;
     long long total = 0;
+    bIsTest = test;
 
     cout << "Day " << day << (test ? " Test" : "") << "\n";
     cout << "----------\n";
@@ -135,6 +140,8 @@ long long DayBase::testPerformance(bool test /*= false*/)
     {
         cout << microseconds << "us" << "\n\n";
     }
+
+    bIsTest = false;
 
     return total;
 }

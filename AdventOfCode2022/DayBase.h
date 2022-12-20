@@ -16,12 +16,16 @@ protected:
     virtual void questionOne(istream& input, ostream& output) = 0;
     virtual void questionTwo(istream& input, ostream& output) = 0;
 
+    bool isTest() { return bIsTest; }
+
 private:
 
     int day;
     ifstream input;
     ifstream testInput;
     ifstream testInputTwo;
+
+    bool bIsTest = false;
 
     virtual void resetData() {}
 

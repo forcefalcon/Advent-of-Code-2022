@@ -43,8 +43,7 @@ protected:
             closestBeacons.emplace_back(pair<int, int>(beaconX, beaconY));
         }
 
-        int testRow = 2000000;
-        //int testRow = 10;
+        int testRow = isTest() ? 10 : 2000000;
 
         vector<int> sensorIndexes;
         int minX = -1;
@@ -144,8 +143,7 @@ protected:
             closestBeacons.emplace_back(pair<int, int>(beaconX, beaconY));
         }
 
-        int maxCoord = 4000000;
-        //int maxCoord = 20;
+        int maxCoord = isTest() ? 20 : 4000000;
 
         bool found = true;
         long long foundX = 0;
