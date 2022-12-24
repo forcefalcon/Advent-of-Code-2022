@@ -57,7 +57,7 @@ protected:
 
 		findFaces(grid, faces);
 
-		printFaces(grid, faces);
+		//printFaces(grid, faces);
 
 		State player;
 
@@ -613,7 +613,7 @@ private:
 				newX = relX + nextFace.left;
 				newY = relY + nextFace.top;
 
-				cout << "Transition from " << face.index << " to " << nextFace.index << ": " << player.x << ", " << player.y << " -> " << newX << ", " << newY << " Facing: " << player.facing << " -> " << newFacing << endl;
+				//cout << "Transition from " << face.index << " to " << nextFace.index << ": " << player.x << ", " << player.y << " -> " << newX << ", " << newY << " Facing: " << player.facing << " -> " << newFacing << endl;
 
 				break;
 			}
