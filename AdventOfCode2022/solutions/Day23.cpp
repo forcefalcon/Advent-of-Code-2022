@@ -80,7 +80,7 @@ protected:
 		}
 
 		//print(state);
-		int total = (maxX - minX + 1) * (maxY - minY + 1) - state.elves.size();
+		int total = (maxX - minX + 1) * (maxY - minY + 1) - (int)state.elves.size();
 		output << total;
 	}
 
