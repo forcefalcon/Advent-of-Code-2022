@@ -15,17 +15,8 @@ public:
 		: DayBase(20)
 	{}
 
-	struct Position
-	{
-		int value;
-		bool hasMoved;
-		int index;
-
-		Position(int v, bool m, int i) : value(v), hasMoved(m), index(i) {}
-	};
-
-	//typedef tuple<int, bool, int> Position; // value, hasMoved, currentIndex
-	typedef list<Position> PositionList;
+	typedef pair<int, bool> Position; // value, hasMoved
+	typedef list<pair<int, bool>> PositionList;
 
 	typedef pair<int, int> Q2Position;
 	typedef list<Q2Position> Q2List;
@@ -40,17 +31,17 @@ protected:
 		{
 			Position currPos = *current;
 
-			if (!currPos.hasMoved)
+			if (!currPos.second)
 			{
-				currPos.hasMoved = true;
+				currPos.second = true;
 
 				current = pos.erase(current);
 
 				PositionList::iterator nextLoc = current;
 
-				if (currPos.value < 0)
+				if (currPos.first < 0)
 				{
-					for (int i = 0; i > currPos.value; --i)
+					for (int i = 0; i > currPos.first; --i)
 					{
 						if (nextLoc == pos.begin())
 						{
@@ -72,7 +63,7 @@ protected:
 						nextLoc = pos.begin();
 					}
 
-					for (int i = 0; i < currPos.value; ++i)
+					for (int i = 0; i < currPos.first; ++i)
 					{
 						++nextLoc;
 
@@ -94,7 +85,7 @@ protected:
 		int total = 0;
 		PositionList::const_iterator location = pos.begin();
 
-		while ((*location).value != 0)
+		while ((*location).first != 0)
 		{
 			++location;
 		}
@@ -109,7 +100,7 @@ protected:
 
 			if (i == 1000 || i == 2000 || i == 3000)
 			{
-				total += (*location).value;
+				total += (*location).first;
 			}
 		}
 
@@ -205,12 +196,10 @@ private:
 
 	void parse(istream& input, PositionList& list)
 	{
-		int index = 0;
 		string line;
 		while (getline(input, line))
 		{
-			list.emplace_back(atoi(line.c_str()), false, index);
-			index++;
+			list.emplace_back(atoi(line.c_str()), false);
 		}
 	}
 
