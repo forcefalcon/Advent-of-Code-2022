@@ -16,7 +16,7 @@ protected:
     virtual void questionOne(istream& input, ostream& output) = 0;
     virtual void questionTwo(istream& input, ostream& output) = 0;
 
-    bool isTest() { return bIsTest; }
+    bool isTest() const { return bIsTest; }
 
 private:
 
