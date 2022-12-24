@@ -96,6 +96,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -128,6 +129,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -146,6 +148,11 @@
     <ClCompile Include="solutions\Day18.cpp" />
     <ClCompile Include="solutions\Day19.cpp" />
     <ClCompile Include="solutions\Day2.cpp" />
+    <ClCompile Include="solutions\Day20.cpp" />
+    <ClCompile Include="solutions\Day21.cpp" />
+    <ClCompile Include="solutions\Day22.cpp" />
+    <ClCompile Include="solutions\Day23.cpp" />
+    <ClCompile Include="solutions\Day24.cpp" />
     <ClCompile Include="solutions\Day3.cpp" />
     <ClCompile Include="solutions\Day4.cpp" />
     <ClCompile Include="solutions\Day5.cpp" />

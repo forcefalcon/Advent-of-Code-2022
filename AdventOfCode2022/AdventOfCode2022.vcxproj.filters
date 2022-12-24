@@ -90,6 +90,18 @@
     <ClCompile Include="solutions\Day20.cpp">
       <Filter>Source Files\Solutions</Filter>
     </ClCompile>
+    <ClCompile Include="solutions\Day21.cpp">
+      <Filter>Source Files\Solutions</Filter>
+    </ClCompile>
+    <ClCompile Include="solutions\Day22.cpp">
+      <Filter>Source Files\Solutions</Filter>
+    </ClCompile>
+    <ClCompile Include="solutions\Day23.cpp">
+      <Filter>Source Files\Solutions</Filter>
+    </ClCompile>
+    <ClCompile Include="solutions\Day24.cpp">
+      <Filter>Source Files\Solutions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Helpers.h">
