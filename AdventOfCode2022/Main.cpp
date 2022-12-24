@@ -15,10 +15,10 @@ int main()
         Test = 2
     };
 
-    const char DATA_TO_USE = Regular | Test;
+    const char DATA_TO_USE = Regular;// | Test;
     const bool TEST_PERFORMANCE = false;
     const bool RUN_ALL = false;
-    const int RUN_SPECIFIC = 1;
+    const int RUN_SPECIFIC = 22;
 
     if (RUN_ALL)
     {
